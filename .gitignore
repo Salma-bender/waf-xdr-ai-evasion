@@ -1,0 +1,42 @@
+# Secrets et identifiants (NE JAMAIS committer)
+*.env
+*secret*
+*password*
+*credentials*
+*.key
+*.pem
+config.local.*
+
+# Clés API (pipeline LLM futur)
+api_keys.txt
+.api_keys
+
+# Fichiers Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# Modèles IA volumineux (seront versionnés autrement si besoin)
+*.pkl
+*.joblib
+*.h5
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Fichiers temporaires
+*.tmp
+*.log
+*.swp
+
+# LaTeX (fichiers de compilation)
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
