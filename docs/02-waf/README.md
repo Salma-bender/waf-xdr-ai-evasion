@@ -96,5 +96,101 @@ Importance pour la suite
 
 
 
-Cette attaque réussie sans protection constitue la référence « avant ». Elle sera comparée au comportement « après » mise en place du WAF/ModSecurity et de la couche IA, pour mesurer l’apport de chaque couche défensive.
+Cette attaque réussie sans protection constitue la référence « avant ». Elle sera comparée au comportement « après » mise en place du WAF/ModSecurity et de la couche IA, pour mesurer l’apport de chaque couche défensive.5. ModSecurity + OWASP CRS
+
+Installation
+
+
+
+Module ModSecurity installé et chargé par Apache :
+
+
+
+sudo apt install libapache2-mod-security2
+
+sudo apachectl -M | grep security   → security2\_module (shared)
+
+
+
+Configuration activée à partir du modèle recommandé, avec deux réglages clés dans /etc/modsecurity/modsecurity.conf :
+
+
+
+SecRuleEngine On (mode actif : ModSecurity bloque les attaques détectées)
+
+SecRequestBodyAccess On (inspection du corps des requêtes, nécessaire pour les attaques POST)
+
+OWASP Core Rule Set (CRS)
+
+
+
+Le CRS officiel (version 4.x) a été cloné depuis le dépôt OWASP et connecté à Apache :
+
+
+
+sudo git clone https://github.com/coreruleset/coreruleset.git /etc/modsecurity/crs
+
+sudo cp /etc/modsecurity/crs/crs-setup.conf.example /etc/modsecurity/crs/crs-setup.conf
+
+
+
+Chargement dans /etc/apache2/mods-enabled/security2.conf :
+
+
+
+IncludeOptional /etc/modsecurity/crs/crs-setup.conf
+
+IncludeOptional /etc/modsecurity/crs/rules/\*.conf
+
+Principe de fonctionnement : score d’anomalie
+
+
+
+Le CRS ne bloque pas règle par règle, mais par score d’anomalie cumulatif. Chaque règle déclenchée ajoute des points ; lorsque le score dépasse le seuil (5 en entrée), la requête est bloquée (403). Ce mécanisme est robuste pour les attaques connues, mais c’est précisément ce que les techniques d’évasion cherchent à contourner : une attaque reformulée qui n’accumule pas assez de points passe sous le seuil.
+
+
+
+Validation : attaque bloquée
+
+
+
+Injection SQL rejouée à travers le WAF (même charge utile que la démonstration sans protection) :
+
+
+
+http://192.168.30.10/dvwa/vulnerabilities/sqli/?id=1' OR '1'='1\&Submit=Submit
+
+
+
+Résultat : 403 Forbidden. La requête est bloquée par le WAF avant d’atteindre l’application.
+
+
+
+Journalisation (error.log) — règles déclenchées :
+
+
+
+942100 : SQL Injection détectée via libinjection (sévérité CRITICAL)
+
+949110 : score d’anomalie dépassé (total 8 ≥ seuil 5) → blocage
+
+980170 : récapitulatif des scores (SQLI=5)
+
+
+
+Preuves : 02-waf-modsecurity-bloque-sqli.png, 02-waf-modsecurity-log-sqli.png
+
+
+
+Comparaison avant / après (cœur de la démonstration)
+
+Scénario	Résultat
+
+SQLi sans protection (accès direct APP)	Tous les utilisateurs révélés — attaque réussie
+
+SQLi avec WAF (ModSecurity + CRS)	403 Forbidden — attaque bloquée
+
+
+
+Cette base valide la détection par signatures pour une attaque classique. La suite du projet consistera à montrer qu’une attaque reformulée (évasion) peut contourner ce même WAF, justifiant l’apport d’une couche de détection par IA.
 
