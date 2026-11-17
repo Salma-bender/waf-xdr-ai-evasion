@@ -27,7 +27,7 @@ Détails : [docs/00-architecture](docs/00-architecture/README.md)
 | [03 — Application](docs/03-app/README.md) | DVWA en zone APP, SQLi réussie sans protection | ✅ |
 | [04 — SIEM](docs/04-siem/README.md) | Wazuh, agent sur le WAF, alertes ModSecurity | ✅ |
 | [05 — Détection et évasion](docs/05-detection-evasion/README.md) | Pont de normalisation, 4 familles, 3 niveaux de gravité | ✅ |
-| 06 — Dataset | Requêtes HTTP labellisées (légitime / 4 familles) | 🔄 En cours |
+| [06 — Dataset](docs/06-dataset/README.md) | 17 600 requêtes labellisées, variantes d'évasion, split train/test | ✅ |
 | 07 — Modèles | Random Forest binaire + classification de famille | ⏳ |
 | 08 — Dashboard | Dashboard SOC (Flask / SQLite / AJAX) | ⏳ |
 | 09 — Pipeline LLM | Génération de règles assistée par LLM, validation humaine | ⏳ |

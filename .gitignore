@@ -40,3 +40,6 @@ desktop.ini
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+# Donnees du dataset (regenerables avec les scripts de src/dataset/)
+data/
+*.csv
