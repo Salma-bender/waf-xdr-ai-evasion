@@ -1,0 +1,71 @@
+{
+  "arbres": 200,
+  "date_utc": "2026-11-17T23:41:17+00:00",
+  "graine": 42,
+  "manifeste_donnees_sha256": "73447318b10f7fa80432b68fe98ce4e782bafe237038ab37a97bfbc8ea6bf57b",
+  "metriques_jeu_de_test": {
+    "classification_famille": {
+      "accuracy": 0.9960227272727272,
+      "rappel_par_famille": {
+        "lfi_rfi": 1.0,
+        "rce": 0.9863636363636363,
+        "sqli": 0.9977272727272727,
+        "xss": 1.0
+      }
+    },
+    "detection_binaire": {
+      "accuracy": 0.9957386363636364,
+      "f1": 0.9957203994293866,
+      "faux_negatifs": 15,
+      "faux_positifs": 0,
+      "precision": 1.0,
+      "rappel": 0.9914772727272727,
+      "rappel_par_source": {
+        "httpparams": 0.983739837398374,
+        "patt": 0.9645390070921985,
+        "seclists": 0.9871794871794872,
+        "variante": 0.9960380348652932
+      },
+      "rappel_par_technique": {
+        "double_encodage_url": 1.0,
+        "encodage_url": 1.0,
+        "encodage_url_partiel": 1.0,
+        "lfi_antislash": 1.0,
+        "lfi_octet_nul": 1.0,
+        "lfi_point_point_encode": 1.0,
+        "lfi_traversee_doublee": 1.0,
+        "lfi_wrapper_php": 1.0,
+        "rce_antislash": 1.0,
+        "rce_guillemets": 0.9583333333333334,
+        "rce_ifs": 1.0,
+        "rce_separateurs": 0.978494623655914,
+        "sqli_casse_mots_cles": 1.0,
+        "sqli_collate": 1.0,
+        "sqli_commentaire_version": 1.0,
+        "sqli_commentaires_inline": 1.0,
+        "sqli_espaces_alternatifs": 1.0,
+        "sqli_operateurs": 1.0,
+        "xss_casse_balises": 0.9574468085106383,
+        "xss_entites_html": 1.0,
+        "xss_protocole_fragmente": 1.0,
+        "xss_separateur_slash": 1.0
+      },
+      "taux_faux_positifs": 0.0
+    }
+  },
+  "modeles": {
+    "classification_famille": {
+      "fichier": "models/baseline/classification_famille.joblib",
+      "octets": 3237399,
+      "sha256": "c1f05799c9a9bc24102e0d5d11eb1c6085b2a4cfc0318d79efd366fa73b9ea52"
+    },
+    "detection_binaire": {
+      "fichier": "models/baseline/detection_binaire.joblib",
+      "octets": 3997954,
+      "sha256": "4c5add622b5df08b140f9254b73b7aaad7a6367e8e2e8a7555a2327b17b0e81e"
+    }
+  },
+  "python": "3.12.3",
+  "requirements_sha256": "6087d5e1306a14aad2c76c4e0fab0969d879ac3f528b9089683fe1938c03eb0a",
+  "scikit_learn": "1.9.1"
+}

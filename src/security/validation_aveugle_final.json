@@ -1,0 +1,33 @@
+{
+  "version": "final",
+  "requetes_brutes": 15,
+  "retirees_car_vues_a_entrainement": 0,
+  "requetes_evaluees": 15,
+  "repartition": {
+    "rce": 8,
+    "benign": 7
+  },
+  "detection_binaire": {
+    "rappel_par_famille": {
+      "rce": {
+        "n": 8,
+        "rappel": 1.0
+      }
+    },
+    "faux_positifs": 0,
+    "benins_total": 7,
+    "taux_faux_positifs": 0.0
+  },
+  "classification_famille": {
+    "rce": {
+      "n": 8,
+      "exactitude": 1.0
+    }
+  },
+  "echantillon_equilibre": {
+    "cap_sqli": 150,
+    "taille": 15,
+    "exactitude_globale": 1.0,
+    "rappel_attaques": 1.0
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fichiers": {
+    "data/processed/dataset.csv": "e1f03f6f157bb08eba698af507b1e26343992fe5a443315987d80ad72c1d213d",
+    "data/processed/httpparams.csv": "c1d864dab39e607f83d05a741dc9c5c22720d4174887bceb42042de887b6cb96",
+    "data/processed/payloads_publics.csv": "760db21424c3a9be892c5e16ea6ecb129278b66aae33c7ae18e8161b582d19c4",
+    "data/processed/test.csv": "748c3958095e2d437514d0d1edbf3eac35c834a8284c87e709a401f45df46bd6",
+    "data/processed/train.csv": "b2223f8c15ac4f4bdd020e71b8c404a16a2ee69b28a79434057945fba8787f33",
+    "data/processed/train_durci.csv": "5d906127f54d0d77f23f52608799ae7f0e253289d8c326df36115e12e75c604e",
+    "data/processed/validation_aveugle.csv": "08399de88e38bf4022fc0d73f3df63b99481c8d8ffe1625e95907354b77ec101",
+    "data/processed/validation_rce2.csv": "c0fc9d8515d6b107f2dee3f645a1a7fee02411198939f18dd0d4951d95c2c789",
+    "data/processed/validation_reelle.csv": "443deb3d706b9650d636f15ed1018a9e7ba78bbabfc963f549791b6d6f5053d1",
+    "data/processed/variantes_evasion.csv": "76be7ac3119ffa196546d896e576fab781abb0980fad5d4bc52d0e75ccd1cb44"
+  },
+  "sources": {
+    "HttpParamsDataset": "926670a710283f87c05b554680facf3f9530548c",
+    "PayloadsAllTheThings": "08ea40e77db3f42ef8f20c65196f3936a19b6c86",
+    "SecLists": "6b19c2f5088c45b5dadb4d8918d2ab4f7efb03a9"
+  }
+}

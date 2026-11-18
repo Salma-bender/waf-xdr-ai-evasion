@@ -1,0 +1,59 @@
+{
+  "requetes_brutes": 1311,
+  "retirees_car_vues_a_entrainement": 3,
+  "requetes_evaluees": 1308,
+  "repartition": {
+    "benign": 37,
+    "sqli": 1233,
+    "xss": 15,
+    "lfi_rfi": 12,
+    "rce": 11
+  },
+  "detection_binaire": {
+    "rappel_par_famille": {
+      "lfi_rfi": {
+        "n": 12,
+        "rappel": 1.0
+      },
+      "rce": {
+        "n": 11,
+        "rappel": 0.36363636363636365
+      },
+      "sqli": {
+        "n": 1233,
+        "rappel": 0.9935117599351176
+      },
+      "xss": {
+        "n": 15,
+        "rappel": 1.0
+      }
+    },
+    "faux_positifs": 1,
+    "benins_total": 37,
+    "taux_faux_positifs": 0.02702702702702703
+  },
+  "classification_famille": {
+    "lfi_rfi": {
+      "n": 12,
+      "exactitude": 1.0
+    },
+    "rce": {
+      "n": 4,
+      "exactitude": 0.0
+    },
+    "sqli": {
+      "n": 1225,
+      "exactitude": 1.0
+    },
+    "xss": {
+      "n": 15,
+      "exactitude": 1.0
+    }
+  },
+  "echantillon_equilibre": {
+    "cap_sqli": 150,
+    "taille": 225,
+    "exactitude_globale": 0.96,
+    "rappel_attaques": 0.9574468085106383
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "arbres": 200,
+  "date_utc": "2026-11-18T02:47:46+00:00",
+  "donnees": "train_durci.csv",
+  "graine": 42,
+  "manifeste_donnees_sha256": "89161cf5370725bcfe9e671f541463348fbc89c7024fa6c7fe1d42509ff40f2a",
+  "metriques_jeu_de_test": {
+    "classification_famille": {
+      "accuracy": 0.9948863636363636,
+      "rappel_par_famille": {
+        "lfi_rfi": 1.0,
+        "rce": 0.9954545454545455,
+        "sqli": 0.9954545454545455,
+        "xss": 0.9886363636363636
+      }
+    },
+    "detection_binaire": {
+      "accuracy": 0.9974431818181818,
+      "f1": 0.9974380871050385,
+      "faux_negatifs": 8,
+      "faux_positifs": 1,
+      "precision": 0.9994295493439818,
+      "rappel": 0.9954545454545455,
+      "rappel_par_source": {
+        "httpparams": 0.991869918699187,
+        "patt": 0.9787234042553191,
+        "seclists": 0.9914529914529915,
+        "variante": 0.9984152139461173
+      },
+      "rappel_par_technique": {
+        "double_encodage_url": 1.0,
+        "encodage_url": 1.0,
+        "encodage_url_partiel": 1.0,
+        "lfi_antislash": 1.0,
+        "lfi_octet_nul": 1.0,
+        "lfi_point_point_encode": 1.0,
+        "lfi_traversee_doublee": 1.0,
+        "lfi_wrapper_php": 1.0,
+        "rce_antislash": 1.0,
+        "rce_guillemets": 1.0,
+        "rce_ifs": 1.0,
+        "rce_separateurs": 1.0,
+        "sqli_casse_mots_cles": 1.0,
+        "sqli_collate": 1.0,
+        "sqli_commentaire_version": 1.0,
+        "sqli_commentaires_inline": 1.0,
+        "sqli_espaces_alternatifs": 1.0,
+        "sqli_operateurs": 1.0,
+        "xss_casse_balises": 0.9574468085106383,
+        "xss_entites_html": 1.0,
+        "xss_protocole_fragmente": 1.0,
+        "xss_separateur_slash": 1.0
+      },
+      "taux_faux_positifs": 0.0005681818181818182
+    }
+  },
+  "modeles": {
+    "classification_famille": {
+      "fichier": "models/durci/classification_famille.joblib",
+      "octets": 4323716,
+      "sha256": "37b98c3cb1bf0ea2c93a7237746fa93d2b4db891ff7404265b339560065c5eaf"
+    },
+    "detection_binaire": {
+      "fichier": "models/durci/detection_binaire.joblib",
+      "octets": 6154922,
+      "sha256": "da2299fccee550125eed7dfe5f4a634df51af76852067f73d85e77fb0a514d44"
+    }
+  },
+  "python": "3.12.3",
+  "requirements_sha256": "6087d5e1306a14aad2c76c4e0fab0969d879ac3f528b9089683fe1938c03eb0a",
+  "scikit_learn": "1.9.1"
+}

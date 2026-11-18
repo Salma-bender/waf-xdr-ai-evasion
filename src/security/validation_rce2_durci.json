@@ -1,0 +1,33 @@
+{
+  "version": "durci",
+  "requetes_brutes": 10,
+  "retirees_car_vues_a_entrainement": 0,
+  "requetes_evaluees": 10,
+  "repartition": {
+    "rce": 8,
+    "benign": 2
+  },
+  "detection_binaire": {
+    "rappel_par_famille": {
+      "rce": {
+        "n": 8,
+        "rappel": 0.25
+      }
+    },
+    "faux_positifs": 0,
+    "benins_total": 2,
+    "taux_faux_positifs": 0.0
+  },
+  "classification_famille": {
+    "rce": {
+      "n": 2,
+      "exactitude": 1.0
+    }
+  },
+  "echantillon_equilibre": {
+    "cap_sqli": 150,
+    "taille": 10,
+    "exactitude_globale": 0.4,
+    "rappel_attaques": 0.25
+  }
+}
