@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOC IA — Détection d'évasions</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="marque"><span class="point"></span>SOC IA <small>WAF · XDR · détection d'évasions</small></div>
+  <div class="etat">
+    <label>Période
+      <select id="periode">
+        <option value="1">1 h</option>
+        <option value="24" selected>24 h</option>
+        <option value="168">7 jours</option>
+      </select>
+    </label>
+    <span id="maj">connexion…</span>
+  </div>
+</header>
+
+<main>
+  <section class="kpis">
+    <div class="kpi critique"><span class="lib">Évasions rattrapées</span><span class="val" id="k-evasion">–</span><span class="aide">le WAF a laissé passer, l'IA détecte</span></div>
+    <div class="kpi"><span class="lib">Attaques confirmées</span><span class="val" id="k-bloquee">–</span><span class="aide">bloquées par le WAF, confirmées par l'IA</span></div>
+    <div class="kpi"><span class="lib">Bloquées par le WAF seul</span><span class="val" id="k-wafseul">–</span><span class="aide">le WAF bloque, l'IA ne détecte pas</span></div>
+    <div class="kpi"><span class="lib">Requêtes analysées</span><span class="val" id="k-total">–</span><span class="aide" id="k-score">score moyen –</span></div>
+  </section>
+
+  <section class="grille">
+    <div class="carte">
+      <h2>Attaques par famille</h2>
+      <div id="familles" class="barres"></div>
+    </div>
+    <div class="carte">
+      <h2>Sources les plus actives</h2>
+      <table class="compact"><thead><tr><th>Adresse</th><th>Attaques</th><th>Évasions</th></tr></thead><tbody id="sources"></tbody></table>
+    </div>
+    <div class="carte large">
+      <h2>Activité par heure <small>requêtes analysées / attaques</small></h2>
+      <div id="chrono" class="chrono"></div>
+    </div>
+  </section>
+
+  <section class="carte">
+    <div class="titre-ligne">
+      <h2>Détections</h2>
+      <select id="filtre">
+        <option value="">Toutes les attaques</option>
+        <option value="evasion_rattrapee">Évasions rattrapées</option>
+        <option value="attaque_bloquee">Attaques confirmées</option>
+      </select>
+    </div>
+    <div class="defile">
+      <table>
+        <thead><tr><th>Heure (UTC)</th><th>Catégorie</th><th>Famille</th><th>Score</th><th>WAF</th><th>Source</th><th>Chemin</th><th>Paramètre</th><th>Charge</th></tr></thead>
+        <tbody id="detections"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

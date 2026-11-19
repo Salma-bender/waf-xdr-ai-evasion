@@ -1,0 +1,30 @@
+<!-- Phase 08 — Détection IA (ajouté à /var/ossec/etc/rules/local_rules.xml) -->
+<group name="ia_detection,">
+  <rule id="100400" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="source">^ia_detecteur$</field>
+    <description>IA : verdict d'attaque emis par le detecteur</description>
+  </rule>
+  <rule id="100401" level="8">
+    <if_sid>100400</if_sid>
+    <field name="categorie">^attaque_bloquee$</field>
+    <description>IA : attaque $(famille) confirmee, deja bloquee par le WAF</description>
+    <mitre><id>T1190</id></mitre>
+  </rule>
+  <rule id="100402" level="13">
+    <if_sid>100400</if_sid>
+    <field name="categorie">^evasion_rattrapee$</field>
+    <description>IA : EVASION - attaque $(famille) non bloquee par le WAF, detectee par l'IA</description>
+    <mitre><id>T1190</id></mitre>
+  </rule>
+</group>
+
+<!-- Intégrité du service d'analyse (complète le groupe ia_integrite de la Phase 07) -->
+<group name="ia_integrite,syscheck,">
+  <rule id="100304" level="10">
+    <if_sid>550,553,554</if_sid>
+    <field name="file">/opt/ia-soc/src/|/etc/ia-soc/|ia-analyse.service</field>
+    <description>IA : code ou configuration du service d'analyse modifie ($(file))</description>
+    <mitre><id>T1565.001</id></mitre>
+  </rule>
+</group>

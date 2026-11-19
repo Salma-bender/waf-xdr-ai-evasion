@@ -29,7 +29,7 @@ Détails : [docs/00-architecture](docs/00-architecture/README.md)
 | [05 — Détection et évasion](docs/05-detection-evasion/README.md) | Pont de normalisation, 4 familles, 3 niveaux de gravité | ✅ |
 | [06 — Dataset](docs/06-dataset/README.md) | 17 600 requêtes labellisées, variantes d'évasion, split train/test | ✅ |
 | [07 — Modèles](docs/07-models/README.md) | Random Forest binaire + famille, cycle de vie sécurisé (OWASP ML Top 10), validation sur requêtes réelles | ✅ |
-| 08 — Dashboard | Dashboard SOC (Flask / SQLite / AJAX) | ⏳ |
+| [08 — Service & Dashboard](docs/08-dashboard/README.md) | Service d'analyse continue intégré à Wazuh + dashboard SOC (Flask / SQLite / AJAX), détection d'évasions | ✅ |
 | 09 — Pipeline LLM | Génération de règles assistée par LLM, validation humaine | ⏳ |
 
 ## Stack
