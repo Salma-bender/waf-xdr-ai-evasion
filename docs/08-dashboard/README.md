@@ -155,7 +155,7 @@ bloquée.
 C'est la démonstration de la valeur de la couche IA : les attaques que le WAF
 seul laisse passer sont détectées et remontent au SOC comme alertes critiques.
 
-**Preuves** : `08-demo-evasions-kali.png`, `08-demo-evasions-dashboard1.png`, `08-demo-evasions-dashboard2.png`, `08-demo-evasions-wazuh.png`
+**Preuves** : `08-demo-evasions-kali.png`, `08-demo-evasions-dashboard1.png`, `08-demo-evasions-dashboard2.png`, `08-demo-evasions-wazuh.png`, `08-demo-evasions-wazuh2.png`
 
 ## 7. Bilan des menaces (couche IA en service)
 
