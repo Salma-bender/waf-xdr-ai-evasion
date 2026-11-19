@@ -113,6 +113,39 @@ attribuée à l'attaquant.
 
 **Preuves** : `08-collecteur-deploye.png`, `08-chaine-reelle-kali-waf-ia.png`
 
+### 4.1 Surface d'analyse élargie
+
+Le collecteur n'analyse plus seulement les paramètres de requête, mais toutes
+les zones où une attaque peut se cacher :
+
+| Zone | Emplacement transmis |
+|------|----------------------|
+| Chemin de l'URL | `path` |
+| Paramètres d'URL et de formulaire | nom du paramètre |
+| Corps JSON (parcouru récursivement) | `json:<chemin>` |
+| Valeurs de cookies | `cookie:<nom>` |
+| En-têtes vecteurs d'attaque (`X-Forwarded-For`, `X-Original-URL`…) | `header:<nom>` |
+
+L'emplacement est transmis dans le champ `parametre`, donc visible dans le
+dashboard et les alertes, sans changer le schéma de la base.
+
+Deux choix de conception :
+
+- les en-têtes `User-Agent` et `Referer` sont volontairement exclus : un
+  `User-Agent` normal contient des `;`, des parenthèses et des mots, que les
+  caractéristiques de structure du modèle prendraient pour une injection. Les
+  analyser provoquerait des faux positifs sur le trafic légitime ;
+- un anti-doublon à durée de vie évite de renvoyer sans cesse une même valeur au
+  même emplacement (bruit des cookies de session, des en-têtes répétés).
+
+Démonstration : une injection de commande (`10.0.0.9;id`) placée dans l'en-tête
+`X-Forwarded-For` n'est pas bloquée par le WAF (code 200). Le collecteur la
+soumet au service, qui la détecte (`evasion_rattrapee`, RCE, score 0,95). Le
+dashboard affiche l'emplacement `header:x-forwarded-for`. Avant l'élargissement,
+cette attaque n'était jamais analysée.
+
+**Preuves** : `08-collecteur-surface-elargie.png`, `08-demo-surface-kali.png`, `08-demo-surface-collecteur.png`, `08-demo-surface-dashboard.png`
+
 ## 5. Dashboard SOC — `src/dashboard/`
 
 Flask + SQLite (lecture seule) + AJAX, rafraîchissement automatique toutes les
@@ -169,7 +202,7 @@ seul laisse passer sont détectées et remontent au SOC comme alertes critiques.
 
 ## Limites
 
-- Le collecteur analyse les paramètres de requête ; les en-têtes et le corps JSON ne sont pas couverts.
+- La surface couvre chemin, paramètres, corps JSON, cookies et en-têtes ciblés ; `User-Agent` et `Referer` sont exclus par choix (faux positifs).
 - Le suivi de la dérive repose sur la journalisation ; aucune alerte automatique de dérive n'est encore en place.
 - Le jeu de validation réel reste de taille modeste (cf. Phase 07).
 
