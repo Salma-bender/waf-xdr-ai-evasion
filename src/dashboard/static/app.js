@@ -9,6 +9,12 @@ const LIBELLES = {
   legitime: "Légitime",
 };
 const FAMILLES = { sqli: "SQLi", xss: "XSS", lfi_rfi: "LFI/RFI", rce: "RCE" };
+const STATUTS = {
+  en_attente: "En attente",
+  valide: "Validée",
+  rejete: "Rejetée",
+  applique: "Appliquée",
+};
 
 function el(tag, texte, classe) {
   const e = document.createElement(tag);
@@ -89,6 +95,72 @@ function afficherDetections(lignes) {
   }
 }
 
+// ----- Phase 09 : règles proposées + validation humaine ---------------------
+async function decider(rid, decision, bouton) {
+  if (decision === "rejete" && !confirm("Rejeter la règle " + rid + " ?")) return;
+  const parent = bouton.parentNode;
+  parent.querySelectorAll("button").forEach((b) => (b.disabled = true));
+  try {
+    const r = await fetch("/api/regles/decider", {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json", "X-SOC-CSRF": "1" },
+      body: JSON.stringify({ regle_id: rid, decision: decision }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.erreur || "HTTP " + r.status);
+    rafraichirRegles();
+  } catch (e) {
+    alert("Échec : " + e.message);
+    parent.querySelectorAll("button").forEach((b) => (b.disabled = false));
+  }
+}
+
+function afficherRegles(d) {
+  const lignes = d.regles || [];
+  const tb = $("regles"); vider(tb);
+  if (!lignes.length) { const tr = el("tr"); const td = el("td", "aucune règle", "vide"); td.colSpan = 9; tr.appendChild(td); tb.appendChild(tr); return; }
+  for (const l of lignes) {
+    const tr = el("tr", null, l.statut === "en_attente" ? "ligne-attente" : "");
+    tr.appendChild(el("td", l.regle_id, "mono"));
+    tr.appendChild(el("td", FAMILLES[l.famille] || l.famille));
+    tr.appendChild(el("td", l.emplacement, "mono petit"));
+    tr.appendChild(el("td", l.client_ip || "?", "mono"));
+    tr.appendChild(el("td", l.payload, "mono charge"));
+    tr.appendChild(el("td", l.motif, "mono charge"));
+    const tdx = el("td", l.regle_xml, "mono regle");
+    tdx.title = l.regle_xml;
+    tr.appendChild(tdx);
+    tr.appendChild(el("td", STATUTS[l.statut] || l.statut, "pastille s-" + l.statut));
+
+    const act = el("td");
+    if (l.statut === "en_attente") {
+      const ok = el("button", "Valider", "btn btn-ok");
+      ok.addEventListener("click", () => decider(l.regle_id, "valide", ok));
+      const no = el("button", "Rejeter", "btn btn-no");
+      no.addEventListener("click", () => decider(l.regle_id, "rejete", no));
+      act.appendChild(ok); act.appendChild(no);
+    } else {
+      const quand = (l.applique_le || l.decide_le || "").replace("T", " ").slice(0, 19);
+      act.appendChild(el("span", (l.decide_par ? l.decide_par + " · " : "") + quand, "petit"));
+    }
+    tr.appendChild(act);
+    tb.appendChild(tr);
+  }
+}
+
+async function rafraichirRegles() {
+  try {
+    const d = await lire("/api/regles?statut=" + encodeURIComponent($("filtre-regles").value));
+    afficherRegles(d);
+  } catch (e) {
+    const tb = $("regles"); vider(tb);
+    const tr = el("tr"); const td = el("td", "règles indisponibles (" + e.message + ")", "vide");
+    td.colSpan = 9; tr.appendChild(td); tb.appendChild(tr);
+  }
+}
+
 async function rafraichir() {
   try {
     const h = $("periode").value;
@@ -104,11 +176,13 @@ async function rafraichir() {
     $("maj").textContent = "connexion perdue (" + e.message + ")";
     $("maj").className = "erreur";
   }
+  rafraichirRegles();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   $("periode").addEventListener("change", rafraichir);
   $("filtre").addEventListener("change", rafraichir);
+  $("filtre-regles").addEventListener("change", rafraichirRegles);
   rafraichir();
   setInterval(rafraichir, 5000);
 });

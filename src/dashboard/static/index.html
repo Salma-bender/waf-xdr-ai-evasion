@@ -47,6 +47,25 @@
 
   <section class="carte">
     <div class="titre-ligne">
+      <h2>Règles IA proposées <small>générées par le LLM à partir des évasions rattrapées — validation humaine avant application</small></h2>
+      <select id="filtre-regles">
+        <option value="en_attente" selected>En attente</option>
+        <option value="valide">Validées</option>
+        <option value="applique">Appliquées</option>
+        <option value="rejete">Rejetées</option>
+        <option value="">Toutes</option>
+      </select>
+    </div>
+    <div class="defile">
+      <table>
+        <thead><tr><th>ID</th><th>Famille</th><th>Emplacement</th><th>Source</th><th>Charge d'origine</th><th>Motif (regex)</th><th>Règle ModSecurity</th><th>Statut</th><th>Décision</th></tr></thead>
+        <tbody id="regles"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="carte">
+    <div class="titre-ligne">
       <h2>Détections</h2>
       <select id="filtre">
         <option value="">Toutes les attaques</option>

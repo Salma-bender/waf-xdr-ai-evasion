@@ -16,8 +16,16 @@ Configuration (variables d'environnement) :
   IA_API_TOKEN   jeton partagé avec le collecteur (obligatoire, 32 caractères minimum)
   IA_VERSION     version des modèles (défaut : final)
   IA_DB          base SQLite         (défaut : data/service/detections.db)
+  IA_REGLES_DB   base des règles     (défaut : <dossier de IA_DB>/regles.db)
   IA_ALERT_LOG   journal des alertes (défaut : logs/ia-alertes.json)
   IA_DEBIT       requêtes par seconde autorisées par appelant (défaut : 50)
+
+Phase 09 — distribution des règles validées vers le WAF :
+  GET  /regles/approuvees  règles validées/appliquées (XML) pour l'applicateur ;
+  POST /regles/applique    passe des règles de « validée » à « appliquée ».
+Ces deux routes exigent le même jeton Bearer que /analyser. Le service ne modifie
+le statut que dans le sens validée -> appliquée ; la validation humaine reste la
+seule voie pour approuver une règle (depuis le dashboard).
 """
 import hmac
 import json
@@ -38,6 +46,7 @@ from chargement_sur import ModeleCompromis, charger  # noqa: E402
 VERSION = os.environ.get("IA_VERSION", "final")
 JETON = os.environ.get("IA_API_TOKEN", "")
 DB = Path(os.environ.get("IA_DB", BASE / "data/service/detections.db"))
+REGLES_DB = Path(os.environ.get("IA_REGLES_DB", DB.parent / "regles.db"))
 JOURNAL = Path(os.environ.get("IA_ALERT_LOG", BASE / "logs/ia-alertes.json"))
 DEBIT = float(os.environ.get("IA_DEBIT", "50"))
 
@@ -114,6 +123,18 @@ def champ(d, nom, taille=TAILLE_MAX_CHAMP, requis=False):
     return v
 
 
+def jeton_ok(req):
+    """Vérifie le jeton Bearer en temps constant (partagé avec le collecteur/applicateur)."""
+    en_tete = req.headers.get("Authorization", "")
+    return hmac.compare_digest(en_tete.encode(), f"Bearer {JETON}".encode())
+
+
+def connexion_regles():
+    c = sqlite3.connect(REGLES_DB, timeout=10)
+    c.row_factory = sqlite3.Row
+    return c
+
+
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
 
@@ -125,8 +146,7 @@ def sante():
 
 @app.post("/analyser")
 def analyser():
-    en_tete = request.headers.get("Authorization", "")
-    if not hmac.compare_digest(en_tete.encode(), f"Bearer {JETON}".encode()):
+    if not jeton_ok(request):
         return jsonify(erreur="non autorisé"), 401
     if not autorise_debit(request.remote_addr or "?"):
         return jsonify(erreur="débit dépassé"), 429
@@ -169,3 +189,52 @@ def analyser():
 
     return jsonify(ia_label=ia_label, ia_famille=ia_famille, ia_score=round(score, 3),
                    categorie=categorie)
+
+
+# --------- Phase 09 : distribution des règles validées vers le WAF -------------
+@app.get("/regles/approuvees")
+def regles_approuvees():
+    """Règles approuvées par un humain (validée ou déjà appliquée) + leur XML.
+    L'applicateur du WAF reconstruit l'intégralité de son fichier à partir de cette liste."""
+    if not jeton_ok(request):
+        return jsonify(erreur="non autorisé"), 401
+    if not autorise_debit(request.remote_addr or "?"):
+        return jsonify(erreur="débit dépassé"), 429
+    try:
+        with connexion_regles() as c:
+            lignes = [dict(r) for r in c.execute(
+                "SELECT regle_id, famille, regle_xml, statut FROM regles_proposees "
+                "WHERE statut IN ('valide', 'applique') ORDER BY regle_id")]
+    except sqlite3.OperationalError:
+        lignes = []   # aucune règle générée pour l'instant
+    return jsonify(regles=lignes)
+
+
+@app.post("/regles/applique")
+def regles_applique():
+    """Passe des règles de « validée » à « appliquée » (appelé par l'applicateur
+    APRÈS un rechargement réussi du WAF). Ne touche jamais une règle non validée."""
+    if not jeton_ok(request):
+        return jsonify(erreur="non autorisé"), 401
+    if not autorise_debit(request.remote_addr or "?"):
+        return jsonify(erreur="débit dépassé"), 429
+    d = request.get_json(silent=True)
+    if not isinstance(d, dict):
+        return jsonify(erreur="JSON attendu"), 400
+    ids = d.get("regle_ids")
+    if not isinstance(ids, list) or not ids or len(ids) > 500 \
+            or not all(isinstance(x, int) for x in ids):
+        return jsonify(erreur="regle_ids invalide"), 400
+    maintenant = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    marques = ",".join("?" * len(ids))
+    try:
+        with connexion_regles() as c:
+            cur = c.execute(
+                f"UPDATE regles_proposees SET statut = 'applique', applique_le = ? "
+                f"WHERE regle_id IN ({marques}) AND statut = 'valide'",
+                [maintenant, *ids])
+            c.commit()
+            n = cur.rowcount
+    except sqlite3.OperationalError:
+        return jsonify(erreur="base de règles indisponible"), 503
+    return jsonify(ok=True, appliquees=n, horodatage=maintenant)

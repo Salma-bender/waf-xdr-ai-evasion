@@ -48,3 +48,13 @@ table.compact td,table.compact th{padding:6px 8px}
 .col .tot{background:#2c3a49}.col .att{background:var(--rouge)}
 .col .h{position:absolute;bottom:0;font-size:10px;color:var(--doux)}
 @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}.grille{grid-template-columns:1fr}}
+/* Phase 09 — règles proposées */
+.regle{max-width:360px;white-space:pre-wrap;word-break:break-all;color:#9fd0ff;font-size:11.5px;line-height:1.3}
+.ligne-attente td{background:rgba(240,160,75,.07)}
+.s-en_attente{color:var(--orange)}.s-valide{color:var(--vert)}.s-rejete{color:var(--doux)}.s-applique{color:var(--bleu)}
+.btn{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--bord);border-radius:6px;padding:4px 10px;margin:0 3px 3px 0;cursor:pointer;color:var(--texte);background:var(--carte)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn-ok{border-color:rgba(63,178,127,.55);color:var(--vert)}
+.btn-ok:hover:not(:disabled){background:rgba(63,178,127,.14)}
+.btn-no{border-color:rgba(229,72,77,.45);color:var(--rouge)}
+.btn-no:hover:not(:disabled){background:rgba(229,72,77,.12)}
