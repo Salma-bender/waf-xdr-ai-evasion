@@ -6,6 +6,10 @@ Les défenses classiques (WAF, XDR) reposent sur des signatures : une attaque re
 
 ## Architecture
 
+![Architecture — détection d'évasions Web par WAF, XDR et IA](docs/00-architecture/architecture.jpg)
+
+Le WAF bloque les attaques connues, l'IA rattrape ce que le WAF laisse passer (évasions), une règle ModSecurity est générée par un LLM, validée par un analyste depuis le dashboard, puis appliquée automatiquement sur le WAF.
+
 Laboratoire VirtualBox piloté par pfSense, en micro-segmentation Zero Trust (default deny) :
 
 | Zone | Réseau | Machine | Rôle |
@@ -30,7 +34,7 @@ Détails : [docs/00-architecture](docs/00-architecture/README.md)
 | [06 — Dataset](docs/06-dataset/README.md) | 17 600 requêtes labellisées, variantes d'évasion, split train/test | ✅ |
 | [07 — Modèles](docs/07-models/README.md) | Random Forest binaire + famille, cycle de vie sécurisé (OWASP ML Top 10), validation sur requêtes réelles | ✅ |
 | [08 — Service & Dashboard](docs/08-dashboard/README.md) | Service d'analyse continue intégré à Wazuh + dashboard SOC (Flask / SQLite / AJAX), détection d'évasions | ✅ |
-| 09 — Pipeline LLM | Génération de règles assistée par LLM, validation humaine | ⏳ |
+| [09 — Pipeline LLM](docs/09-llm-pipeline/README.md) | Génération de règles ModSecurity assistée par LLM à partir des évasions rattrapées, validation humaine depuis le dashboard, application automatique sur le WAF | ✅ |
 
 ## Stack
 

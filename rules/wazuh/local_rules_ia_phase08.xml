@@ -14,7 +14,7 @@
   <rule id="100402" level="13">
     <if_sid>100400</if_sid>
     <field name="categorie">^evasion_rattrapee$</field>
-    <description>IA : EVASION - attaque $(famille) non bloquee par le WAF, detectee par l'IA</description>
+    <description>IA : EVASION - attaque $(famille) non bloquee par le WAF, detectee par l'IA. Valider ou rejeter la regle dans le dashboard SOC https://192.168.56.70:8443</description>
     <mitre><id>T1190</id></mitre>
   </rule>
 </group>

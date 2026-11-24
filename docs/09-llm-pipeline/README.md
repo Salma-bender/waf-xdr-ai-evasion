@@ -68,7 +68,9 @@ SecRule REQUEST_URI|ARGS|ARGS_NAMES|REQUEST_HEADERS|REQUEST_COOKIES|XML:/*|REQUE
 Auto-test hors-ligne (sans clé) : `python generer_regle.py --test` (faux LLM,
 vérifie motifs valides, rejet des motifs trop larges, absence de doublon).
 
-**Preuves** : `09-regles-generees.png` (3 règles RCE générées, motifs propres).
+**Preuves** — 3 règles RCE générées, motifs propres :
+
+![Règles RCE générées par le LLM, motifs propres](09-regles-generees.png)
 
 ## 3. Validation humaine — `src/dashboard/` (routes ajoutées)
 
@@ -89,7 +91,11 @@ Sécurité conservée :
 
 La validation **ne touche pas le WAF** : elle passe le statut à `valide`.
 
-**Preuves** : `09-dashboard-regles-attente.png`, `09-dashboard-regle-validee.png`.
+**Preuves** — règles en attente dans le dashboard, puis règle validée :
+
+![Dashboard SOC : règles IA proposées en attente de validation](09-dashboard-regles-attente.png)
+
+![Dashboard SOC : règle 9100002 validée, avec auteur et horodatage](09-dashboard-regle-validee.png)
 
 ## 4. Distribution des règles — `src/service/analyse_api.py` (routes ajoutées)
 
@@ -131,8 +137,41 @@ du collecteur (`/etc/ia-collecteur/collecteur.env`).
 C'est la preuve que la couche IA ferme la boucle : elle apprend de ce que le WAF a
 laissé passer et renforce le WAF, avec un humain dans la boucle.
 
-**Preuves** : `09-demo-evasion-bloquee.png` (200 puis 403), `09-regle-appliquee-waf.png`
-(fichier `zz-ia-generees.conf`).
+**Preuves** — la même évasion renvoie 200 (avant) puis 403 (après la règle), et le fichier appliqué sur le WAF :
+
+![Kali : la même évasion renvoie 200 avant la règle puis 403 après](09-demo-evasion-bloquee.png)
+
+![waf-dmz : applicateur et contenu de zz-ia-generees.conf](09-regle-appliquee-waf.png)
+
+## 7. Alerte email de l'analyste (Wazuh)
+
+Quand une évasion rattrapée est détectée, Wazuh lève l'alerte `100402` (niveau 13)
+et envoie un **email** à l'analyste pour qu'il traite la règle proposée. L'email
+**ne sert qu'à alerter** : la validation reste dans le dashboard authentifié — pas
+de validation par lien cliquable dans l'email, qui serait un risque de sécurité.
+
+- envoi via un **relais Postfix local → Gmail** (authentification par mot de passe
+  d'application, TLS) ; Wazuh pointe `smtp_server` sur `localhost` ;
+- déclenchement par `email_alert_level 12` (toute alerte de niveau ≥ 12), donc la
+  règle évasion `100402` (niveau 13) part automatiquement ;
+- la description de la règle `100402` contient l'action à mener et le lien du
+  dashboard (« Valider ou rejeter la regle dans le dashboard SOC … »).
+
+**Preuves** — email reçu pour une évasion rattrapée, et l'alerte correspondante dans Wazuh :
+
+![Email Wazuh : évasion rattrapée niveau 13 avec lien vers le dashboard](09-email-evasion.png)
+
+![Wazuh : règle 100402 niveau 13 (évasion rattrapée)](09-wazuh-evasion.png)
+
+## Note sur le WAF (CRS) et le vecteur d'évasion
+
+Le CRS OWASP est **bien chargé et fonctionnel** : une injection SQL classique
+(`UNION SELECT`) est bloquée par le CRS lui-même (règle `949110`, dépassement du
+score d'anomalie). L'évasion de la démonstration passe non pas parce que le WAF est
+mal configuré, mais parce qu'elle est placée dans un **en-tête HTTP**
+(`X-Forwarded-For`), un point que le CRS n'inspecte pas comme vecteur d'exécution de
+commande : c'est un **angle mort** du filtrage par signatures. L'IA, qui analyse la
+valeur de l'en-tête, le comble — ce qui illustre précisément l'apport du projet.
 
 ## Bilan des menaces (couche de génération de règles)
 
